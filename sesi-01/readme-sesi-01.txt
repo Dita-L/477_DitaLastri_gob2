@@ -1,12 +1,15 @@
 Di sesi 1 kita belajar
-	1. installasi Golang dan VSCode
+
+1. installasi Golang dan VSCode
   
-	2. Menulis kode pertama
-		package main
-		import "fmt"
-		func main() {
-			fmt.Println("Hello World")
-		}
+2. Menulis kode pertama
+	package main
+	
+	import "fmt"
+	
+	func main() {
+		fmt.Println("Hello World")
+	}
 	
   3. Menyiapkan GOPATH dan Go module
 	
