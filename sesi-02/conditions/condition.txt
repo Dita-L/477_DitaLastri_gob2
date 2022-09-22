@@ -1,0 +1,139 @@
+Conditions
+
+	Kondisi(condition) digunakan untuk mengatur alur suatu program. analogikan seperti lampu lalulintas.
+  ketika kondisi lampu berwarna merah kita berhenti, ketika lampunya hijau kita jalan.
+  ini yang dimaksud mengatur alur.
+  
+	Pada Go, terdapat 2 cara menggunakan kondisi yaitu memakai "if", dan "switch".
+
+  	Menggunakan "if"
+
+  		package main
+
+	  	import "fmt"
+
+		  func main() {
+		  	var currentYear = 2022
+
+  			if (age := currentYear - 1998; age < 17) {
+  				fmt.Println("kamu belum boleh membuat kartu sim")
+  			} else {
+  				fmt.Println("kamu sudah boleh membuat kartu sim")
+  			}
+  		}
+
+  		output :
+	  		kamu sudah boleh membuat kartu sim
+
+
+      Disini, age merupakan sebuah variabel khusus untuk blok kode "if" karena variabel tersebut dibuat di dalam "if".
+      Kemudian, kita membuat suatu kondisi "age lebih kecil dari 17".
+      Jadi, ketika dibaca secara keseluruhan;
+
+            Jika age kurang dari 17, print "kamu belum boleh mambuat kartu sim". 
+            else (Kalau tidak), print "kamu sudah boleh membuat kartu sim" 
+
+      Jika kondisinya lebih dari satu, bisa menggunakan "else if"
+
+                package main
+
+                import "fmt"
+
+                func main() {
+                  var lampu = "hijau"
+
+                  if lampu == "hijau" {
+                    fmt.Println("Silahkan jalan")
+                  } else if lampu == "merah" {
+                    fmt.Println("Berhenti!")
+                  } else {
+                    fmt.Println("Hati-hati")
+                  }
+
+                }
+
+                Output:
+                  Silahkan jalan
+
+	Menggunakan "switch"
+		
+                var nilai = 8
+
+                switch nilai {
+                case 8:
+                  fmt.Println("perfect")
+                case 7:
+                  fmt.Println("awesome")
+                default:
+                  fmt.Println("not bad")
+                }
+
+                output:
+                  perfect
+
+	Menggunakan "switch" dengan operator perbandingan
+
+                  var nilai2 = 6
+
+                  switch {
+                  case nilai2 == 8:
+                    fmt.Println("perfect")
+                  case (nilai2 > 3) && (nilai2 < 8):
+                    fmt.Println("awesome")
+                  default:
+                    fmt.Println("not bad")
+                  }
+
+                  output:
+                    awesome
+
+		  perhatikan nama "nilai2" tidak ditulis setelah "switch" namun setelah "case".
+
+
+	Menggunakan "switch" dengan "fallthrough" keyword.
+		Pada "switch", ketika case sudah sesuai atau bernilai benar, case lain yang berada dibawahnya tidak akan dibaca.
+		kecuali menggunakan keyword fallthrough. keyword falltrough membuat case dibawahnya dibaca, tetapi hanya yang berada tepat dibawahnya.
+
+                    var nilai2 = 4
+
+                    switch {
+                    case nilai2 == 8:
+                      fmt.Println("perfect")
+                    case (nilai2 > 3) && (nilai2 < 8):
+                      fmt.Println("awesome")
+                      fallthrough
+                    case nilai2 < 5:
+                      fmt.Println("try harder")
+                    default:
+                      fmt.Println("not bad")
+                    }
+
+                    output:
+                      awesome
+                      try harder
+
+	Kondisional Bersarang
+		Kondisional bersarang merupakan sebuah proses kondisional yang di dalamnya terdapat proses kondisional kembali.
+    Kita dapat menggunakan if, else if , else, switch ataupun menggabungkan seluruhnya.
+			
+              var score = 10
+
+              if score > 7 {
+                switch score {
+                case 10:
+                  fmt.Println("perfect!")
+                default:
+                  fmt.Println("nice!")
+                }
+              } else {
+                if score == 5 {
+                  fmt.Println("not bad")
+                } else if score == 3 {
+                  fmt.Println("keep trying")
+                } else {
+                  fmt.Println("you can do it!")
+                  if score == 0 {
+                    fmt.Println("try harder!")
+                  }
+                }
+              }
