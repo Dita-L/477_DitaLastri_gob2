@@ -1,0 +1,126 @@
+Array
+
+	Array adalah kumpulan dari data-data. Di Go, data yang kita simpan dalam array harus bertipe data sama.
+	Array pada Go memiliki panjang yang tetap. Panjang ini menentukan jumlah data yang ada pada Array.
+
+	Membuat array ada 2 cara, 
+		a. Membuat Array Kosong
+
+			var nama_array [panjang_array/jumlah_data]tipe_data
+
+
+			var banyak_angka [4]int
+			fmt.Println(banyak_angka)
+
+			output :
+			[0 0 0 0]
+
+			
+			kemudian dari array kosong ini bisa diisi seperti berikut:
+	
+			var banyak_angka [4]int
+			banyak_angka = [4]int{4, 3, 2, 1}
+
+			fmt.Println(banyak_angka)
+
+			output:
+			[4 3 2 1]
+
+		b. Membuat Array langsung terisi
+			
+			var nama_array = [panjang_array/jumlah_data]tipe_data{data1, data2, data3, ....}
+			
+
+			var angka_angka = [4]int{4, 3, 2, 1}
+			fmt.Println(angka_angka)
+
+			output :
+			[4 3 2 1]
+
+			nama_array := [panjang_array/jumlah_data]tipe_data{data1, data2, data3, ....}
+			
+			
+			kata_kata := [3]string{"halo", "hai", "bye"}
+			fmt.Println(kata_kata)
+
+			output:
+			[halo hai bye]
+
+	Modify Data Through Index (Mengubah data melalui indeks)
+		kita ambil contoh buah-buahan.
+		
+			var buah =[4]string{"mangga", "apel", "jambu", "jeruk"}
+		
+		kemudian kita ingin mengubah "mangga" menjadi "rambutan". Disini kita gunakan indeks.
+
+			var buah =[4]string{"mangga", "apel", "jambu", "jeruk"}
+			fmt.Println(buah)
+
+			buah[0] = "rambutan"
+			fmt.Println(buah)
+
+			output:
+			[mangga apel jambu jeruk]
+			[rambutan apel jambu jeruk]
+
+		Jadi, indeks, yang berada di dalam kurung siku ([]) mewakili posisi masing-masing data pada array
+		
+			contoh nya
+
+			data:	mangga	apel	jambu	jeruk
+			indeks:	0	1	2	3
+
+		dengan menulis buah[0] berarti kita mengakses data pada "buah" dengan indeks 0.
+
+
+	Looping pada array
+		sesuai dengan namanya "loop", berarti menggunakan "for".
+		ada 2 cara membuat looping pada array.
+		
+		Menggunakan "range"
+			Dengan menggunakan range loop kita bisa dengan mudah mengakses seluruh element pada sebuah array dengan bisa jugasekaligus mendapatkan indexnya.
+
+			var buah = [4]string{"mangga", "apel", "jambu", "jeruk"}
+			buah[0] = "rambutan"
+			fmt.Println(buah)
+
+			for i, element := range buah {
+				fmt.Printf("index: %d, elemen: %s\n", i, element)
+			}
+
+			Output:
+				index: 0, elemen: rambutan
+				index: 1, elemen: apel
+				index: 2, elemen: jambu
+				index: 3, elemen: jeruk
+
+		Menggunakan "len"
+			"len" merupakan singkatan dari "length". "len" mewakili panjang array, yang sama dengan jumlah elemen pada array.
+
+				var buah = [4]string{"mangga", "apel", "jambu", "jeruk"}
+				buah[0] = "rambutan"
+				fmt.Println(buah)				
+
+				for i := 0; i < len(buah); i++ {
+					fmt.Printf("index= %d, elemen: %s\n", i, buah[i])
+				}
+ 
+				Output:
+					index= 0, elemen: rambutan
+					index= 1, elemen: apel
+					index= 2, elemen: jambu
+					index= 3, elemen: jeruk
+
+		Multidimensional Array
+			multidimensional array berarti ada array dalam array.
+				[{1 2 3} {4 5 6}]
+
+			Membuat multidimensional array
+
+				var contoh [3][4]int
+				fmt.Println(contoh)
+
+				Output:
+				[[0 0 0 0] [0 0 0 0] [0 0 0 0]]
+
+			[3][4]int berarti array memiliki 3 elemen, yang masing-masing elemennya memiliki 4 elemen.
