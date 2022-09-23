@@ -52,6 +52,24 @@ Caranya adalah dengan menggunakan slicing.
 Setiap kita membuat suatu slice pada bahasa Go , secara otomatis Go akan membuat suatu array tersembunyi yang disebut dengan Backing array. Backing array akan bertugas untuk menyimpan elemen pada slice, bukan slice nya sendiri. Bahasa Go mengimplementasikan slice sebagai sebuah struktur data yang disebut dengan slice header.
 menggunakan append dapat mambuat backing array baru.
 
-            
+MAP
+	Sama seperti tipe data array dan slice, map juga berfungsi untuk menyimpan satu atau lebih data. Namun, map disimpan sebagai "key:value pairs" (pasangan key dan value).
+	Semua key dan value memiliki tipe data yang static, sehingga semua key harus memiliki  tipe data yang sama, begitu pula juga dengan tipe data value nya.
+Setiap key pada sebuah map harus unik namun value nya tidak mesti unik.
+	Map juga termasuk salah satu tipe data yang masuk dalam kategori reference type sama seperti tipe data slice.
+Berarti jika ada suatu map yang berusaha untuk meng-copy map lainnya, dan map tersebut mengganti value pada suatu key, maka value dari map lainnya tersebut juga akan ikut terganti.
 
-    
+ALIASES
+	Aliase merupakan sebuah fitur pada bahasa Go yang digunakan sebagai nama alternative dari tipe data yang sudah ada
+	Tipe data dengan nama yang berbeda memiliki arti bahwa tipe data nya juga berbeda, tetapi terdapat pengecualian terhadap aliase.
+	Tipe data byte merupakan tipe data aliase dari tipe data uint8, yang berarti mereka merupakan tipe data yangsama dengan nama yang berbeda.
+	Tipe data rune merupakan tipe data aliase dari tipe data uint32, yang berarti mereka merupakan tipe data yang sama dengan nama yang berbeda.
+
+STRING IN DEPTH
+
+Tipe data string dalam Go terbentuk dari kumpulan tipe data byte (uint8), yang kita  sebut slice of bytes.
+	string == slice of bytes
+
+Ketika kita melakukan indexing terhadap string, maka kita akan mendapat nilai representasi dari byte nya.
+	nilai representasi == ASCII Code == byte == uint8
+Masing-masing nilai ASCII merepresentasikan masing-masing huruf.
