@@ -1,0 +1,152 @@
+MAP
+
+Sama seperti tipe data array dan slice, map juga berfungsi untuk menyimpan satu atau lebih data,
+Namun, map disimpan sebagai "key:value pairs" (pasangan key dan value).
+
+Membuat map
+	1. 	var nama_map map[tipe_data_key]tipe_data_value
+		nama_map =  map[tipe_data_key]tipe_data_value{
+			key1 : value,
+			key2 : value,
+			key3 : value,
+		} 
+
+
+
+	2.	var nama_map map[tipe_data_key]tipe_data_value = map[tipe_data_key]tipe_data_value{
+			key1 : value,
+			key2 : value,
+			key3 : value,
+		} 
+
+	Contoh 
+		var person map[string]string //Deklarasi
+		person = map[string]string{
+			"nama":     "Dita Lastri",
+			"usia":     "24",
+			"kotaasal": "Kab.Bekasi",
+		}
+		fmt.Println(person)
+
+		Output:
+			map[kotaasal:Kab.Bekasi nama:Dita Lastri usia:24]
+
+	perhatikan bahwa urutan dari yang diinput oleh kita dan output dari kode berbeda.
+	output berurut berdasarkan huruf dari key.
+
+	
+Semua key dan value memiliki tipe data yang static, sehingga semua key harus memiliki  tipe data yang sama, begitu pula juga dengan tipe data value nya.
+Setiap key pada sebuah map harus unik namun value nya tidak mesti unik.
+
+Map juga termasuk salah satu tipe data yang masuk dalam kategori reference type sama seperti tipe data slice.
+Berarti jika ada suatu map yang berusaha untuk meng-copy map lainnya, dan map tersebut mengganti value pada suatu key, maka value dari map lainnya tersebut juga akan ikut terganti.
+Zero value dari tipe data map adalah nil.
+
+Menambahkan key:value pairs pada map
+
+		var person map[string]string 
+		person = map[string]string{
+			"nama":     "Dita Lastri",
+			"usia":     "24",
+			"kotaasal": "Kab.Bekasi",
+		}
+
+		person["hobby"] = "jalan"
+		fmt.Println(person)
+
+		Output:
+			map[hobby:jalan kotaasal:Kab.Bekasi nama:Dita Lastri usia:24]
+
+Kita juga bisa mengakses, ataupun mengubah key:value pada map
+
+		var person map[string]string 
+		person = map[string]string{
+			"nama":     "Dita Lastri",
+			"usia":     "24",
+			"kotaasal": "Kab.Bekasi",
+		}
+
+		person["hobby"] = "jalan"
+		person["nama"] = "Dita"					//mengakses dan mengubah
+
+		fmt.Println(person)
+		fmt.Println("saya berasal dari ", person["kotaasal"]	//mengakses
+
+		Output :
+			map[hobby:jalan kotaasal:Kab.Bekasi nama:Dita usia:24]
+			saya berasal dari Kab.Bekasi
+
+Kita juga dapat menghapus data key:value, dengan menggunakan fungsi "delete"
+
+		var person map[string]string 
+		person = map[string]string{
+			"nama":     "Dita Lastri",
+			"usia":     "24",
+			"kotaasal": "Kab.Bekasi",
+		}
+
+		person["hobby"] = "jalan"
+		person["nama"] = "Dita"	
+
+		fmt.Println(person)
+		delete(person, "hobby")
+		fmt.Println(person)
+
+		Output:
+			map[hobby:jalan kotaasal:Kab.Bekasi nama:Dita usia:24]
+			map[kotaasal:Kab.Bekasi nama:Dita usia:24]
+
+
+Kita juga dapat mendeteksi keberadaan suatu value dengan cara mengakses key dari map nya lalu memberikan 2 variable sebagai penampungnya.
+Misalkan kita ingin mengetahui apakah data "hobby: jalan" ada atau tidak
+
+		value, adatidak := person["hobby"]
+
+Variable value yang kita berikan akan mengembalikan value asli dari map nya jika memang key nya ada, 
+jika tidak ada maka kita akan mendapat zero value dari value nya.
+Kemudian variable exist yang kita berikan akan mengembalikan nilai dengan tipe data bool.
+Variable exist akan mengembalikan true jika memang key nya ada, jika tidak maka akan mengembalikan false.
+
+		value, adatidak := person["hobby"]
+		fmt.Println(value, adatidak)
+
+		Output:
+			 false  =======> (karakter kosong)(spasi)false
+						karakter kosong karena zero-value nya data string "jalan".
+
+
+Looping map
+
+kita bisa membuat loop dari map menggunakan "range"
+
+		var person map[string]string 
+		person = map[string]string{
+			"nama":     "Dita Lastri",
+			"usia":     "24",
+			"kotaasal": "Kab.Bekasi",
+		}
+
+		for key, val := range person {
+			fmt.Println(key, ":", val)
+		}
+
+		Output:
+			nama : Dita
+			usia : 24
+			kotaasal : Kab.Bekasi
+
+		Perhatikan bahwa urutan pada input dan output adalah sama
+
+
+
+
+
+
+
+		
+
+
+
+
+
+

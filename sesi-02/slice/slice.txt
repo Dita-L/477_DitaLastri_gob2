@@ -1,0 +1,176 @@
+SLICE
+
+Slice merupakan suatu tipe data yang mirip dengan tipe data array, yaitu untuk menyimpan satu atau lebih data. 
+Berbeda dengan array, slice tidak memiliki sifat fixed-length  yang berarti panjang dari slice tidak tetap.
+Berarti, ketika membuat slice, jumlah elemen/data yang ada dalam slice tidak ditentukan.
+
+		package main
+		
+		import "fmt"
+
+		func main() {
+			var fruit = []string{"apel", "pisang", "jambu"}
+			fmt.Println(fruit)
+
+		}
+
+		Output:
+			[apel pisang jambu]
+
+Membuat slice juga bisa menggunakan "make". Hasilnya akan berupa slice kosong.
+
+		var angka = make([]int, 3)	=====> 3 sebagai panjang slice
+		fmt.Println(angka)
+		fmt.Printf("%#v", angka)
+
+		Output:
+			[0 0 0]
+			[]int{0, 0, 0}
+
+Jika kita ingin mengubah elemen pada slice, sama seperti array, kita dapat menggunakan indeksnya.
+
+	slice "angka"		[	0	0	0	]
+	indeks				0	1	2
+
+		var angka = make([]int, 3)
+		angka[1] = 7
+
+		fmt.Println(angka)
+
+		Output:
+			[0 7 0]
+	
+Ada juga fungsi "append", digunakan untuk menambahkan elemen pada slice.
+
+		var fruit = []string{"apel", "pisang", "jambu"}
+		fruit = append(fruit, "mangga", "rambutan")
+		fmt.Println(fruit)
+
+		Output:
+			[apel pisang jambu mangga rambutan]
+
+Jika kita ingin menggabungkan dua atau lebih slice, dapat menggunakan "append" dan tanda ellipsis (...).
+
+		var fruit = []string{"apel", "pisang", "jambu", "mangga", "rambutan"}
+		var fruit2 = []string{"pir", "anggur"}
+
+		fruit = append(fruit, fruit2...)
+		fmt.Println(fruit)
+
+		Output:
+			[apel pisang jambu mangga rambutan pir anggur]
+
+Jika kita ingin menyalin slice1 ke slice2, gunakan fungsi "copy".
+fungsi "copy" akan mengembalikan nilai berupa banyaknya jumlah elemen yang di-copy, yaitu nilai paling rendah dari "len" masing-masing slice.
+
+		var fruit = []string{"apel", "pisang"}
+		var fruit2 = []string{"pir", "anggur"}
+
+		abc := copy(fruit, fruit2)
+		fmt.Println(abc)
+		fmt.Println(fruit)
+		fmt.Println(fruit2)
+
+		Output:
+		2
+		[pir anggur]
+		[pir anggur]
+
+
+Contoh lain dari penggunaan fungsi "copy"
+
+		var fruit = []string{"apel", "pisang", "jambu", "mangga", "rambutan"}
+		var fruit2 = []string{"pir", "anggur"}
+
+		abc := copy(fruit, fruit2)
+		fmt.Println(abc)
+		fmt.Println(fruit)
+		fmt.Println(fruit2)
+
+		Output:
+		2
+		[pir anggur jambu mangga rambutan]
+		[pir anggur]
+
+Contoh lain lagi
+
+		var fruit = []string{"apel", "pisang", "jambu", "mangga", "rambutan"}
+		var fruit2 = []string{"pir", "anggur"}
+
+		abc := copy(fruit2, fruit)
+		fmt.Println(abc)
+		fmt.Println(fruit)
+		fmt.Println(fruit2)
+
+		Output:
+		2
+		[apel pisang jambu mangga rambutan]
+		[apel pisang]
+
+
+Ada cara agar kita dapat mendapatkan element-element dari sebuah slice dan kita juga bisa menentukan element dari index keberapa yang ingin kita dapatkan. 
+Caranya adalah dengan menggunakan slicing.
+
+		var buah = []string{"apel", "pisang", "jambu", "mangga"}
+
+	disini terbentuk slice "buah".
+
+	slice buah	apel	pisang	jambu	mangga
+	indeks		0	1	2	3
+
+	kemudian kita ingin mendapatkan elemen-elemen dari buah, dimulai dari pisang - mangga.
+
+		var buah = []string{"apel", "pisang", "jambu", "mangga"}
+		var x = buah[1:]
+		fmt.Println(buah)
+		fmt.Println(x)
+
+		Output:
+		[apel pisang jambu mangga]
+		[pisang jambu mangga]
+
+	"buah[1:]"	====> slice buah, dimulai dari indeks 1, sampai terakhir
+	"buah[:2]"	====> slice buah, dimulai dari awal, sampai indeks 2, tetapi tidak dengan elemen pada indeks 2
+	"buah[1:2]"	====> slice buah, dimulai dari indeks 1, sampai indeks 2, tetapi tidak dengan elemen pada indeks 2
+
+
+Backing Array Pada Slice
+	Setiap kita membuat suatu slice pada bahasa Go , secara otomatis Go akan membuat suatu array tersembunyi yang disebut dengan Backing array.
+	Backing array akan bertugas untuk menyimpan elemen pada slice, bukan slice nya sendiri.
+	Bahasa Go mengimplementasikan slice sebagai sebuah struktur data yang disebut dengan slice header.
+	
+	Slice header terdiri dari
+		Alamat memori/address, dari backing array.
+		Panjang dari slice, yang bisa didapatkan dari fungsi len.
+		Kapasitas dari slice, yang bisa didapatkan dari fungsi cap.
+
+Ketika kita mencoba untuk mendapatkan  beberapa elemen dari sebuah slice yang sudah ada dengan cara melakukan slicing, maka Go tidak akan membuat suatu backing array baru melainkan slice tersebut akan berbagi backing array yang sama dengan slice yang sudah ada.
+
+		//slicing
+		var buah = []string{"apel", "pisang", "jambu", "mangga"}
+		var x = buah[1:2]
+		fmt.Println(buah)
+		fmt.Println(x)
+
+		//Backing Array
+		x[0] = "rambutan"
+		fmt.Println(buah)
+		fmt.Println(x)
+
+		Output:
+		[apel pisang jambu mangga]
+		[pisang]
+		[apel rambutan jambu mangga]
+		[rambutan]
+	
+	perhatikan bahwa slice "buah" juga ikut berubah, yaitu "pisang" terganti dengan "rambutan".
+	Hal ini dikarenakan slice "buah" dan slice "x" mengacu pada backing array yang sama.
+
+menggunakan append dapat mambuat backing array baru.
+
+	
+
+
+
+
+
