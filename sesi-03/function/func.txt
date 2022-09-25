@@ -1,0 +1,149 @@
+FUNCTION
+
+Bahasa Go juga memiliki function atau fungsi nya sendiri. Cara menulis sebuah function pada Go cukup mudah. Caranya
+adalah dengan menggunakan keyword func lalu diikuti dengan nama function dan parameter yang digunakan.	
+
+		func greet(name string, age int8) {
+			fmt.Printf("My name is %s and i'm %d years old", name, age)
+		}
+
+		func main() {
+			greet("Dita", 24)
+		}
+
+Ketika function yang kita buat mengembalikan/me-return sebuah nilai, maka kita perlu menuliskan tipe data dari nilai yang di return.
+
+func greet(pesan string, nama []string) string {
+	//"nama" adalah slice
+	//func greet menerima string = "pesan" dan slice = "nama"
+	// return string
+
+	var namanama = strings.Join(nama, ", ")
+	//Fungsi Join dari package "strings".
+	//Berguna untuk menggabungkan data string dari slice maupun array.
+	// ("") digunakan sebagai pemisah antar string. kalau " " berarti spasi, kalau ", " berarti koma dan spasi.
+
+	var result string = fmt.Sprintf("%s %s", pesan, namanama)
+	//Function Sprintf memiliki fungsi yang sama seperti function Printf,
+	//function Sprintf akan me-return sebuah nilai, function Printf tidak.
+
+	return result
+}
+
+func main() {
+	var names = []string{"aira", "jordan"}
+	var printMsg = greet("Heii", names)
+
+	fmt.Println(printMsg)
+}
+
+
+
+	Output:
+	Heii aira, jordan
+
+
+Variadic Function
+
+Variadic function adalah function yang dapat menerima banyak argumen.
+Variadic functions ditandai adanya titik 3x (...) sebelum tipedata yang diterima.
+
+func print(names ...string) []map[string]string {
+	//fungsi "print" ini adalah "variadic function"
+	//yaitu, func yang dapat menerima banyak argumen.
+	//variadic functions ditandai adanya titik 3x (...) sebelum tipedata yang diterima.
+
+	var result []map[string]string //map kosong
+
+	for i, v := range names {
+		key := fmt.Sprintf("student%d", i+1)
+		//key berperan sebagai key pada map
+		temp := map[string]string{
+			key: v,
+		}
+		//v sebagai value, temp sebagai map
+		result = append(result, temp)
+		//result = kosong + temp
+	}
+	return result
+}
+
+//function print me-return map
+
+func main() {
+	studentLists := print("ariel", "nanda", "nailo", "marco")
+
+	fmt.Printf("%v", studentLists)
+}
+
+
+Output :
+	[map[student1:ariel] map[student2:nanda] map[student3:nailo] map[student4:marco]]
+
+
+Jika kita ingin memakai tipe data slice sebagai argumen untuk sebuah function variadic, maka kita perlu menggunakan tanda ellipsis atau tanda titik tiga (...).
+
+func sum(number ...int) int {
+	total := 0
+
+	for _, v := range number {
+		total += v
+	}
+	return total
+}
+
+func main() {
+	numberLists := []int{1, 2, 3, 4, 5}
+
+	result := sum(numberLists...)
+
+	fmt.Println("Result:", result)
+
+}
+
+
+Output:
+	Result: 15
+
+
+Kita dapat menggabungkan parameter biasa dengan parameter variadic pada sebuah function variadic. 
+Parameter variadic HARUS diletakkan di posisi akhir parameter.
+
+func profile(nama string, favFoods ...string) {
+	merge := strings.Join(favFoods, ", ")
+
+	fmt.Println("Hello! I'm", nama)
+	fmt.Println("I really like", merge)
+}
+
+func main() {
+	profile("Dita", "Nasi", "Sate", "Ayam Bakar", "Ikan Bakar")
+
+}
+
+Output:
+	Hello! I'm Dita
+	I really like Nasi, Sate, Ayam Bakar, Ikan Bakar
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

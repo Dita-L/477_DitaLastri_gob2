@@ -1,0 +1,16 @@
+Nama = Dita Lastri
+Kode Peserta = 477
+Alamat = Bekasi
+Pekerjaan = Belum Bekerja
+Alasan memilih kelas Golang = 
+	1. Pernah liat tutorial dasar di youtube
+	2. Penasaran bagaimana pengimplementasian nya
+
+Panduan aplikasi
+	1.buka cmd
+	2.buka directory dimana file ass-01.go berada
+	3.masukkan perintah 
+		> go run ass-01.go "dita lastri" atau go run ass-01.go "Dita Lastri" , untuk mendapatkan data dari nama.
+		> go run ass-01.go 477 , untuk mendapatkan data dari kode.peserta
+
+

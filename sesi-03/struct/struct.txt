@@ -1,0 +1,227 @@
+STRUCT
+
+Struct adalah sebuah tipe data berupa kumpulan/koleksi dari berbagai macam property/field dan juga method.
+
+Untuk membuat sebuah tipe data struct , kita perlu membuat terlebih dahulu strukturnya dengan urutan format penulisan:
+● Penulisan keyword type
+● Nama dari struct
+● Penulisan keyword struct
+● Kemudian diikuti dengan tanda kurung kurawal {}
+● Mendefinisikan field yang diinginkan
+
+type employee struct {
+	name string
+	age int
+	division string
+}
+
+func main() {
+	var pekerja employee // membuat variabel kosong bernama "pekerja" dengan type "employee"
+
+	pekerja.name = "Airell"				//nilai-nilai baru diberikan
+	pekerja.age = 23
+	pekerja.division = "Curriculum Developer"
+
+	fmt.Println(pekerja)
+	fmt.Println(pekerja.name)
+}
+
+Output:
+{Airell 23 Curriculum Developer}
+Airell
+
+
+Contoh lain
+
+type employee struct {
+	name     string
+	age      int
+	division string
+}
+
+func main() {
+	var pekerja employee
+
+	pekerja.name = "Airell"
+	pekerja.age = 23
+	pekerja.division = "Curriculum Developer"
+
+	var pekerja2 = employee{name: "Ananda", age: 23, division: "Finance"}
+	// nilai langsung diberikan
+
+	fmt.Printf("pekerja1: %+v\n", pekerja)
+	fmt.Printf("pekerja2: %+v\n", pekerja2)
+	// %+v  untuk memformat sebuah struct menjadi string. 
+
+}
+
+Output:
+pekerja1: {name:Airell age:23 division:Curriculum Developer}
+pekerja2: {name:Ananda age:23 division:Finance}
+
+
+Kita juga dapat menggunakan pointer pada sebuah struct.
+
+
+type employee struct {
+	name     string
+	age      int
+	division string
+}
+
+func main() {
+	var pekerja employee
+
+	pekerja.name = "Airell"
+	pekerja.age = 23
+	pekerja.division = "Curriculum Developer"
+
+	var pekerja2 *employee = &pekerja 		//pekerja2 adalah sebuah pointer to struct
+
+	fmt.Println("pekerja1 name:", pekerja.name)
+	fmt.Println("pekerja2 name:", pekerja2.name)
+
+	fmt.Println(strings.Repeat("#", 15))
+
+	pekerja2.name = "Ananda"
+
+	fmt.Println("pekerja1 name:", pekerja.name)
+	fmt.Println("pekerja2 name:", pekerja2.name)
+
+}
+
+
+Output:
+pekerja1 name: Airell
+pekerja2 name: Airell
+###############
+pekerja1 name: Ananda
+pekerja2 name: Ananda
+
+
+
+Embedded Struct
+
+Struct juga dapat mengandung tipe data struct lainnya dengan menjadikannya sebuah field.
+
+type person struct {
+	name string
+	age  int
+}
+
+type employee struct {
+	person   person			//ada struct "person" didalam struct "employee", sebagai field
+	division string
+}
+
+func main() {
+	var pekerja1 = employee{}
+
+	pekerja1.person.name = "Airell"
+	pekerja1.person.age = 23
+	pekerja1.division = "Curriculum Developer"
+
+	fmt.Printf("%+v", pekerja1)
+}
+
+Output:
+{person:{name:Airell age:23} division:Curriculum Developer}
+
+
+Anonymous Struct
+Anonymous Struct adalah sebuah struct yang tidak dideklarasikan di awal sebagai tipe data struct baru,
+melainkan langsung dideklarasikan bersamaan dengan pembuatan  variabel.
+
+
+type person struct {
+	name string
+	age  int
+}
+
+func main() {
+	//anonymous struct tanpa pengisian field
+	var employee = struct {
+		person   person
+		division string
+	}{}
+	employee.person = person{name: "Airell", age: 23}
+	employee.division = "Curriculum developer"
+
+	//anonymous struct dengan pengisian field
+	var employee2 = struct {
+		person   person
+		division string
+	}{
+		person:   person{name: "Ananda", age: 23},
+		division: "Finance",
+	}
+
+	fmt.Printf("Employee1: %+v\n", employee)
+	fmt.Printf("Employee2: %+v\n", employee2)
+}
+
+
+Output:
+Employee1: {person:{name:Airell age:23} division:Curriculum developer}
+Employee2: {person:{name:Ananda age:23} division:Finance}
+
+
+
+Struct juga dapat dikombinasikan dengan slice.
+
+type person struct {
+	name string
+	age  int
+}
+
+func main() {
+	var people = []person{
+		{name: "Airell", age: 23},
+		{name: "Ananda", age: 23},
+		{name: "mailo", age: 23},
+	}
+
+	for _, v := range people {
+		fmt.Printf("%+v\n", v)
+	}
+}
+
+Output:
+{name:Airell age:23}
+{name:Ananda age:23}
+{name:mailo age:23}
+
+
+
+Anonymous struct dan slice
+
+type person struct {
+	name string
+	age  int
+}
+
+func main() {
+
+	var employee = []struct {
+		person   person
+		division string
+	}{
+		{person: person{name: "Airell", age: 23}, division: "Curriculum Developer"},
+		{person: person{name: "Ananda", age: 23}, division: "Finance"},
+		{person: person{name: "mailo", age: 23}, division: "Marketing"},
+	}
+
+	for _, v := range employee {
+		fmt.Printf("%+v\n", v)
+	}
+
+}
+
+Output:
+{person:{name:Airell age:23} division:Curriculum Developer}
+{person:{name:Ananda age:23} division:Finance}
+{person:{name:mailo age:23} division:Marketing}
+
+
+
+

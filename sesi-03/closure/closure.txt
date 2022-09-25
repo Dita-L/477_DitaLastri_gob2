@@ -1,0 +1,112 @@
+CLOSURE
+
+closure adalah function tanpana yang dapat disimpan sebagai variabel.
+selain sebagai variabel, function closure juga dapat dijadikan nilai return sebuah function lain.
+
+
+	var even = func(numbers ...int) []int {			===== > variabel bernama "even" adalah sebuah function closure
+		var result []int
+
+		for _, v := range numbers {
+			if v%2 == 0 {
+				result = append(result, v)
+			}
+		}
+		return result
+	}
+
+	var numbers = []int{1, 2, 3, 4, 5}
+
+	fmt.Println(even(numbers...))
+
+
+Output:
+	[2 4]
+
+
+
+Closure IIFE (immediately-invoked function expression), merupakan sebuah closure yang dapat langsung tereksekusi ketika pertama kali di deklarasi.
+
+	var isPalindrome = func(str string) bool {
+		var temp string = ""
+
+		for i := len(str) - 1; i >= 0; i-- {
+			temp += string(byte(str[i]))
+		}
+		return temp == str
+	}("katak")
+
+	fmt.Println(isPalindrome)
+
+Output:
+	true
+
+isPalindrom adalah closure IFEE yang digunakan untuk mengetahui apakah parameter merupakan kata palindrome (dibalik urutannya tetep sama).
+Jika kita ingin membuat suatu closure menjadi IIFE, maka kita perlu langsung memanggil closure tersebut secara langsung pada saat dideklarasikan.
+Perlu diingat bahwa kita tidak perlu lagi memanggil closure IIFE dengan tanda kurung () karena closure IIFE tereksekusi pada saat dideklarasikan.
+
+
+Closure juga bisa dijadikan sebagai nilai return dari suatu function.
+
+
+func main() {
+	var studentLists = []string{"airell", "nanda", "mailo", "marco"}
+	var find = findStudent(studentLists)
+	fmt.Println(find("airell"))
+
+}
+
+func findStudent(students []string) func(string) string {
+
+	return func(s string) string {
+		var student string
+		var position int
+
+		for i, v := range students {
+			if strings.ToLower(v) == strings.ToLower(s) {
+				student = v
+				position = i
+				break
+			}
+		}
+		if student == "" {
+			return fmt.Sprintf("%s doesn't exist!", s)
+		}
+		return fmt.Sprintf("we found %s at position %d", s, position+1)
+
+	}
+}
+
+
+Output:
+	we found airell at position 1
+
+
+Closure (Callback)
+
+Callback adalah sebuah closure yang dijadikan sebagai parameter pada sebuah function.
+
+func findOddNumbers(numbers []int, ack func(int) bool) int {
+	var totalOddnumbers int
+	for _, v := range numbers {
+		if ack(v) {
+			totalOddnumbers++
+		}
+	}
+	return totalOddnumbers
+}
+
+func main() {
+	var numbers = []int{2, 3, 8, 10, 3, 99, 23}
+
+	var find = findOddNumbers(numbers, func(number int) bool {
+		return number%2 != 0
+	})
+
+	fmt.Println("Total odd numbers:", find)
+}
+
+
+Output:
+	Total odd numbers: 4
+

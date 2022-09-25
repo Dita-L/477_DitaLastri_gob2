@@ -1,0 +1,82 @@
+POINTER
+
+Pointer merupakan sebuah variable spesial yang digunakan untuk menyimpan alamat memori variable lainnya. Sebagai
+contoh sebuah variabel bertipe integer memiliki nilai 4, maka yang dimaksud pointer adalah alamat memori dimana nilai 4
+disimpan, bukan nilai 4 itu sendiri.
+Variabel-variabel yang memiliki reference atau alamat memori yang sama, saling berhubungan satu sama lain dan nilainya
+pasti sama. Ketika ada perubahan nilai, maka akan memberikan efek kepada variabel lain (yang alamat memorinya sama) yaitu
+nilainya juga ikut berubah.
+Cara membuat suatu variable menjadi sebuah pointer cukup mudah. Caranya adalah dengan menggunakan tanda asterisk *
+
+	var firstnumber int = 4
+	var secondnumber *int = &firstnumber
+
+	fmt.Println("firstnumber (val) :", firstnumber)
+	fmt.Println("firstnumber (memory address) :", &firstnumber)
+
+	fmt.Println("secondnumber (val) :", *secondnumber)
+	fmt.Println("secondnumber (memory address) :", secondnumber)
+
+
+Output:
+	firstnumber (val) : 4
+	firstnumber (memory address) : 0xc0000a6058
+	secondnumber (val) : 4
+	secondnumber (memory address) : 0xc0000a6058
+
+kita ingin memberikan sebuah nilai kepada variable pointer, gunakan ampersand (&).
+ketika kita ingin mendapatkan nilai asli yang dikandung oleh sebuah variable pointer, kita perlu 
+menggunakan tanda asterisk *.
+
+	var firstperson string = "John"
+	var secondperson *string = &firstperson
+
+	fmt.Println("firstperson (value) :", firstperson)
+	fmt.Println("firstperson (memory address) :", &firstperson)
+	fmt.Println("secondperson (value) :", *secondperson)
+	fmt.Println("secondperson (memory address) :", secondperson)
+
+	fmt.Println("\n", strings.Repeat("#", 15), "\n")
+
+	*secondperson = "Doe"
+
+	fmt.Println("firstperson (value) :", firstperson)
+	fmt.Println("firstperson (memory address) :", &firstperson)
+	fmt.Println("secondperson (value) :", *secondperson)
+	fmt.Println("secondperson (memory address) :", secondperson)
+
+Output:
+firstperson (value) : John
+firstperson (memory address) : 0xc000040080
+secondperson (value) : John
+secondperson (memory address) : 0xc000040080
+
+ ###############
+
+firstperson (value) : Doe
+firstperson (memory address) : 0xc000040080
+secondperson (value) : Doe
+secondperson (memory address) : 0xc000040080
+
+Variable firstperson awalnya memiliki nilai “John”, lalu terdapat variable bernama secondperson yang mengandung alamat 
+memori dari variable firstperson. Lalu ketika variable secondperson merubah nilai aslinya, maka variable firstperson 
+akan ikut terganti juga nilainya.
+
+
+Pointer juga dapat dijadikan parameter
+
+func changeVal(ptr *int) {
+	*ptr = 20
+}
+
+func main() {
+	var a int = 10
+	fmt.Println("Before:", a)
+	changeVal(&a)
+	fmt.Println("After:", a)
+}
+
+
+Output:
+	Before: 10
+	After: 20

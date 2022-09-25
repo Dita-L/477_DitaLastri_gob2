@@ -1,0 +1,11 @@
+EXPORTED & UNEXPORTED
+
+Pada bahasa Go, tiap folder yang berbeda akan dianggap sebagai suatu package.
+
+Kita dapat menggunakan berbagai variable ataupun tipe data dari package lainnya asalkan variable atau tipe data lainnya tersebut telah ter-eksport dari package nya. 
+
+Kemudian cara kita meng-eksport suatu variable atau suatu tipe data adalah dengan mengawali penulisan variable maupun tipe data lainnya dengan huruf kapital atau upper case. 
+
+Satu hal lagi yang perlu kita ketahui yaitu terdapat suatu function yang akan dieksekusi terlebih dahulu sebelum function main. Function tersebut bernama init.
+
+
