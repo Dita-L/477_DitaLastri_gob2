@@ -1,0 +1,302 @@
+GOROUTINE DAN CONCURRENCY
+
+Concurrency adalah mengeksekusi sebuah proses secara independen atau berhadapan dengan lebih dari satu tugas dalam waktu yang sama.
+
+concurrency berbeda dengan parallelism, karena parallelism memiliki arti mengerjakan tugas yang banyak secara bersamaan dari awal hingga akhir. 
+Sedangkan pada concurrency, kita tidak akan tahu tentang siapa yang akan menyelesaikan tugasnya terlebih dahulu.
+
+Goroutine merupakan sebuah thread ringan pada bahasa Go untuk melakukan concurrency.
+
+Goroutine bersifat asynchronous sehingga proses nya tidak saling tunggu dengan Goroutine lainnya.
+
+Untuk membuat sebuah Goroutine, maka kita harus terlebih dahulu membuat sebuah function. 
+Lalu ketika kita ingin memanggil function tersebut, maka kita perlu menggunakan keyword go sebelum kita memanggil function tersebut.
+
+package main
+
+import "fmt"
+
+func goroutine() {
+	fmt.Println("hello")
+}
+
+func main() {
+	go goroutine()
+	// function "goroutine" otomatis menjadi Goroutine
+}
+
+=======================================================================================================================================================================
+
+Goroutines (Asynchronous Process #1)
+
+
+package main
+
+import (
+	"fmt"
+	"runtime"
+)
+
+func main() {
+	fmt.Println("main execution started")
+
+	go firstProcess(8)
+
+	secondProcess(8)
+
+	fmt.Println("No. of Goroutines:", runtime.NumGoroutine())
+
+	fmt.Println("main execution ended")
+
+}
+
+func firstProcess(index int) {
+	fmt.Println("First process func started")
+	for i := 1; i <= index; i++ {
+		fmt.Println("i=", i)
+	}
+	fmt.Println("First process func ended")
+}
+
+func secondProcess(index int) {
+	fmt.Println("Second process func started")
+	for j := 1; j <= index; j++ {
+		fmt.Println("j=", j)
+	}
+	fmt.Println("Second process func ended")
+}
+
+
+Output:
+main execution started
+Second process func started
+j= 1
+j= 2
+j= 3
+j= 4
+j= 5
+j= 6
+j= 7
+j= 8
+Second process func ended
+No. of Goroutines: 2
+main execution ended
+
+function firstProcess tidak menampilkan hasilnya. 
+Ini terjadi karena setiap Goroutine bekerja secara asynchronous dan satu Goroutine tidak akan saling tunggu menunggu dengan Goroutine lainnya. 
+
+Terdapat 2 jumlah Goroutine yang sedang berjalan padahal kita hanya menjalankan satu function yang dijadikan sebagai sebuah Goroutine. 
+Ini terjadi karena faktanya, function main juga merupakan sebuah Goroutine sehingga function main tidak akan menunggu Goroutine lainnya selesai tereksekusi.
+Inilah yang menjadi penyebab function firstProcess tidak menampilkan hasilnya walaupun sebetulnya function tersebut telah tereksekusi.
+
+=======================================================================================================================================================================
+
+Goroutines (Asynchronous Process #1) - Test
+
+
+package main
+
+import (
+	"fmt"
+	"runtime"
+)
+
+func main() {
+	fmt.Println("main execution started")
+
+	go firstProcess(8)
+
+	//secondProcess(8)
+
+	fmt.Println("No. of Goroutines:", runtime.NumGoroutine())
+
+	fmt.Println("main execution ended")
+
+}
+
+func firstProcess(index int) {
+	fmt.Println("First process func started")
+	for i := 1; i <= index; i++ {
+		fmt.Println("i=", i)
+	}
+	fmt.Println("First process func ended")
+}
+
+func secondProcess(index int) {
+	fmt.Println("Second process func started")
+	for j := 1; j <= index; j++ {
+		fmt.Println("j=", j)
+	}
+	fmt.Println("Second process func ended")
+}
+
+
+Output:
+main execution started
+No. of Goroutines: 2
+main execution ended
+
+
+"go firstProcess(8)" tidak memanggil function firstProcess?
+
+=======================================================================================================================================================================
+
+
+Perlu diingat disini bahwa ketika kita menjalankan sebuah Goroutine, maka Goroutine tersebut akan membutuhkan waktu yang sedikit lebih lama untuk memulai 
+dibandingkan dengan function biasa. 
+Maka dari itu untuk sekarang, kita akan membutuhkan  suatu function yang akan menahan function main untuk langsung menyelesaikan eksekusinya.
+
+		"time.Sleep"
+
+
+package main
+
+import (
+	"fmt"
+	"runtime"
+	"time"
+)
+
+func main() {
+	fmt.Println("main execution started")
+
+	go firstProcess(8)
+
+	secondProcess(8)
+
+	fmt.Println("No. of Goroutines:", runtime.NumGoroutine())
+
+	time.Sleep(time.Second * 2)
+
+	fmt.Println("main execution ended")
+
+}
+
+func firstProcess(index int) {
+	fmt.Println("First process func started")
+	for i := 1; i <= index; i++ {
+		fmt.Println("i=", i)
+	}
+	fmt.Println("First process func ended")
+}
+
+func secondProcess(index int) {
+	fmt.Println("Second process func started")
+	for j := 1; j <= index; j++ {
+		fmt.Println("j=", j)
+	}
+	fmt.Println("Second process func ended")
+}
+
+
+Output1:
+main execution started
+Second process func started
+First process func started
+i= 1
+i= 2
+i= 3
+i= 4
+i= 5
+i= 6
+i= 7
+i= 8
+First process func ended
+j= 1
+j= 2
+j= 3
+j= 4
+j= 5
+j= 6
+j= 7
+j= 8
+Second process func ended
+No. of Goroutines: 1
+main execution ended
+
+
+Output2:
+main execution started
+Second process func started
+j= 1
+j= 2
+First process func started
+i= 1
+i= 2
+i= 3
+i= 4
+i= 5
+i= 6
+i= 7
+i= 8
+First process func ended
+j= 3
+j= 4
+j= 5
+j= 6
+j= 7
+j= 8
+Second process func ended
+No. of Goroutines: 1
+main execution ended
+
+
+Output3:
+main execution started
+Second process func started
+j= 1
+j= 2
+j= 3
+j= 4
+j= 5
+j= 6
+j= 7
+j= 8
+Second process func ended
+No. of Goroutines: 2
+First process func started
+i= 1
+i= 2
+i= 3
+i= 4
+i= 5
+i= 6
+i= 7
+i= 8
+First process func ended
+main execution ended
+
+
+
+kenapa ada 3?
+ada banyak ternyata, karena...
+
+pada concurrency, kita tidak akan tahu tentang siapa yang akan menyelesaikan tugasnya terlebih dahulu.
+
+
+Output4:
+main execution started
+First process func started
+Second process func started
+j= 1
+j= 2
+j= 3
+j= 4
+j= 5
+j= 6
+j= 7
+j= 8
+Second process func ended
+No. of Goroutines: 2
+i= 1
+i= 2
+i= 3
+i= 4
+i= 5
+i= 6
+i= 7
+i= 8
+First process func ended
+main execution ended
+
+=======================================================================================================================================================================

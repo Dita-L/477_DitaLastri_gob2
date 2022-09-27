@@ -1,0 +1,72 @@
+EMPTY INTERFACE
+
+Empty interface adalah sesuatu, yang dapat menerima segala tipe data pada GoLang.
+
+================================================================================================================================================
+func main() {
+	var randomValues interface{}
+
+	_ = randomValues
+
+	randomValues = "Jalan Sudirman"
+	randomValues = 20
+	randomValues = true
+	randomValues = []string{"Airell", "Nanda"}
+
+}
+
+	randomValues menerima value bertipe apapun
+==================================================================================================================================================
+
+func main() {
+	var v interface{}
+
+	v = 20
+
+	v = v * 9 		
+	//eror
+	// kita hanya bisa melakukan perkalian terhadap tipe data int yang konkrit atau asli, 
+	//sedangkan variable v memiliki tipe data empty interface yang diberikan nilai dengan tipe data int.
+
+}
+
+===================================================================================================================================================
+
+type assertion dengan cara yang sama dengan type assertion pada tipe data interface
+
+
+func main() {
+	var v interface{}
+	v = 20
+
+	//v.(int) adalah type assertion, mengembalikan ke tipe asli yaitu int
+
+	if value, ok := v.(int); ok == true {
+		v = value * 9
+	}
+}
+
+===================================================================================================================================================
+
+Empty Interface (Map & Slice)
+
+Ketika sebuah map kita deklarasikan dan value-value nya diberikan tipe data empty interface, maka map tersebut dapat 
+memiliki value dengan tipe data yang berbeda-beda.
+
+Sama halnya dengan slice ataupun array, ketika dideklarasikan dan isinya diberi tipe data empty interface maka slice atau array 
+tersebut dapat memiliki nilai dengan tipe data yang berbeda-beda.
+
+func main() {
+
+	rs := []interface{}{1, "Airell", true, 2, "Ananda", true}
+	//rs adalah slice dengan empty interface
+
+	rm := map[string]interface{}{
+		"name": "Airell",
+		"status": true,
+		"age": 23,
+	}
+	//rm adalah map dengan empty interface
+
+	_, _ = rs, rm
+}

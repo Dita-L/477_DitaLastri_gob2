@@ -1,0 +1,110 @@
+INTERFACE
+
+Interface adalah sebuah tipe data pada bahasa Go yang merupakan kumpulan dari definisi satu atau lebih method.
+Method adalah sebuah function yang spesifik pada sebuah struct atau object.
+
+package main
+
+import (
+	"fmt"
+	"math"
+)
+
+type shape interface {						//shape adalah apapun yang memiliki method area() dan perimeter()
+	area() float64
+	perimeter() float64
+}
+
+type rectangle struct {						//rectangle struct
+	width, height float64
+}
+
+type circle struct {						//circle struct
+	radius float64
+}
+
+func (r rectangle) area() float64 {				//area method untuk struct rectangle
+	return r.width * r.height
+}
+
+func (r rectangle) perimeter() float64 {			//perimeter method untuk struct rectangle
+	return 2 * (r.width + r.height)
+}
+
+func (c circle) area() float64 {				// area method untuk struct circle
+	return math.Pi * math.Pow(c.radius, 2)
+}
+
+func (c circle) perimeter() float64 {				//perimeter method untuk struct circle
+	return 2 * c.radius * math.Pi
+}
+
+func main() {
+	var c1 shape = circle{radius: 5}			//c1 adalah bagian dari shape, dengan tipe circle
+	var r1 shape = rectangle{width: 3, height: 2}		//r1 adalah bagian dari shape, dengan tipe rectangle
+
+	fmt.Printf("Type of c1: %T\n", c1)
+	fmt.Printf("Type of r1: %T\n", r1)
+
+	fmt.Println("Circle area", c1.area())
+	fmt.Println("Circle perimeter", c1.perimeter())
+
+	fmt.Println("Rectangle area", r1.area())
+	fmt.Println("Rectangle perimeter", r1.perimeter())
+}
+
+
+Output:
+Type of c1: main.circle
+Type of r1: main.rectangle   
+Circle area 78.53981633974483
+Circle perimeter 31.41592653589793
+Rectangle area 6
+Rectangle perimeter 10
+
+
+
+Type Assertion Pada Interface
+
+Ketika struct circle menambahkan satu method selain dari method-method yang didefinisikan oleh interface shape, maka variable c1 tidak dapat menggunakan method baru tersebut.
+
+type shape interface {
+	area() float64
+	perimeter() float64
+}
+
+type circle struct {						//circle struct
+	radius float64
+}
+
+func (c circle) area() float64 {				// area method untuk struct circle
+	return math.Pi * math.Pow(c.radius, 2)
+}
+
+func (c circle) perimeter() float64 {				//perimeter method untuk struct circle
+	return 2 * c.radius * math.Pi
+}
+
+func (c circle) volume() float64 {				//volume method untuk struct circle
+	return 4 / 3 * math.Pi * math.Pow(c.radius, 3)		//shape tidak mendefinisikan volume
+}
+
+func main() {
+	var c1 shape = circle{radius: 5}
+
+	//c1.(circle).volume() ==== > namaVariabel(tipeAsli)
+	//type assertion
+	//mengembalikan data tipe interface (c1) kembali ke tipe aslinya (struct)
+
+	value, ok := c1.(circle)
+
+	if ok == true {
+		fmt.Printf("Circle value: %+v\n", value)
+		fmt.Printf("Circle volume: %f", value.volume())
+	}
+}
+
+
+Output:
+Circle value: {radius:5}
+Circle volume: 392.699082

@@ -1,0 +1,134 @@
+REFLECT
+
+Introduction
+
+>Reflect adalah sebuah package
+>Reflect digunakan untuk melakukan inspeksi variabel, mengambil informasi dari variabel tersebut atau bahkan memanipulasinya.
+>Cakupan informasi yang bisa didapatkan lewat reflection sangat luas, seperti melihat struktur variabel, tipe, nilai pointer, dan banyak lagi.
+
+>Dari banyak fungsi yang tersedia di dalam package reflect, ada 2 fungsi yang paling penting untuk diketahui, yaitu
+reflect.ValueOf() dan reflect.TypeOf().
+
+	● Fungsi reflect.ValueOf() akan mengembalikan objek dalam tipe reflect.Value, 
+		yang berisikan informasi yang berhubungan dengan nilai pada variabel yang dicari
+	● Sedangkan reflect.TypeOf() mengembalikan objek dalam tipe reflect.Type. 
+		Objek tersebut berisikan informasi yang berhubungan dengan tipe data variabel yang dicari
+
+
+package main
+
+import (
+	"fmt"
+	"reflect"
+)
+
+func main() {
+	var number = 23
+	var reflectValue = reflect.ValueOf(number)
+	// fungsi reflect.ValueOf mengembalikan objek dalam tipe reflect.Value
+	//reflect.Value berisikan informasi mengenai variabel yang bersangkutan
+	//objek reflect.Value memiliki beberapa method, salah satunya Type()
+	//method Type() mengembalikan tipe data dari variabel yang bersangkutan dalam bentuk string.
+
+	fmt.Println("tipe variabel :", reflectValue.Type())
+
+}
+
+
+Output: 
+tipe variabel : int
+
+=====================================================================================================================================================================
+
+Mengakses Nilai/Value Menggunakan Interface
+
+package main
+
+import (
+	"fmt"
+	"reflect"
+)
+
+func main() {
+	var number = 23
+	var reflectValue = reflect.ValueOf(number)
+
+	//mengakses nilai menggunakan interface method
+	fmt.Println("tipe variabel :", reflectValue.Type())
+	fmt.Println("nilai variabel :", reflectValue.Interface())
+
+	//method interface() mengembalikan/return interface kosong == interface{}
+	//mengakses nilai asli
+	var nilai = reflectValue.Interface().(int)
+	fmt.Println(nilai)
+}
+
+Output:
+tipe variabel : int
+nilai variabel : 23
+23
+
+=====================================================================================================================================================================
+
+Identifying Method Information
+
+Informasi mengenai method juga bisa diakses lewat reflect, syaratnya masih sama seperti pada pengaksesan property, yaitu harus bermodifier public.
+
+
+package main
+
+import (
+	"fmt"
+	"reflect"
+)
+
+type student struct {
+	Name  string
+	Grade int
+
+func (s *student) SetName(name string) {
+	s.Name = name
+}
+
+func main() {
+	var s1 = &student{Name: "john wick", Grade: 2}	//instance struct (struct instant)
+	fmt.Println("nama:", s1.Name)
+
+	var reflectValue = reflect.ValueOf(s1) //refleksi value s1
+
+	var method = reflectValue.MethodByName("SetName") //refleksi method untuk mengubah nama
+	method.Call([]reflect.Value{                      //Call(), untuk mengeksekusi
+		reflect.ValueOf("wick"),
+	})
+
+	fmt.Println("nama :", s1.Name)
+}
+
+
+Output:
+nama: john wick
+nama : wick
+
+
+
+Jika eksekusi method diikuti pengisian parameter, maka parameternya harus ditulis dalam bentuk array[]reflect.Value berurutan sesuai urutan deklarasi parameter-nya.
+Dan nilai yang dimasukkan ke array tersebut harus dalam bentuk reflect.Value (gunakan reflect.ValueOf() untuk pengambilannya).
+=======================================================================================================================================================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
