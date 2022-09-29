@@ -1,0 +1,400 @@
+CHANNELS
+
+Channel merupakan sebuah mekanisme untuk Goroutine saling berkomunikasi dengan Goroutine lainnya. 
+Maksud berkomunikasi disini adalah proses pengiriman dan pertukaran data antara Goroutine satu dengan Goroutine lainnya. 
+
+Untuk membuat sebuah Channel Goroutine, kita memerlukan function make yang merupakan sebuah built-in function dari bahasa Go. 
+
+
+func main() {
+
+	//MEMBUAT CHANNEL GOROUTINE
+	c := make(chan string)
+	//variabel c merupakan variabel dengan tipe data channel of string.
+	//channel of string == channel yang memiliki tipedata string.
+	//cahnnel berfungsi untuk proses pengiriman dan pertukaran data antar Goroutine.
+
+	// OPERATOR CHANNEL ( <- )
+	c <- value
+	//c <- value , mengirim data pada channel c
+
+	result := <- c
+	//menerima data dari channel c, simpan di variabel "result".
+
+	//proses pengiriman dan penerimaan data dari channel bersifat synchronous.
+	 
+}
+
+=====================================================================================================================================================================
+
+Implementasi
+
+Karena function main juga merupakan sebuah Goroutine, maka kode dibawah merupakan contoh dari proses komunikasi antara
+Goroutine main dengan Goroutine introduce melalui channel.
+
+
+package main
+
+import "fmt"
+
+func main() {
+	c := make(chan string)	//membuat channel
+
+	go introduce("Airell", c)	//membuat goroutine dan memanggin func intriduction
+
+	go introduce("Nanda", c)
+
+	go introduce("Mailo", c)
+
+	//kita membuat goroutine sebanyak 3x
+
+
+	//Lalu kita membuat 3 variable untuk penerimaan data dari channel c pada function main 
+	//karena kita membuat 3 Goroutine yang dimana di tiap Goroutine tersebut mengirimkan sebuah data.
+
+	//psn1 <- c yang artinya adalah function main menerima data dari function introduce dan disimpan pada variable psn1
+	psn1 := <-c
+	fmt.Println(psn1)
+
+	psn2 := <-c
+	fmt.Println(psn2)
+
+	psn3 := <-c
+	fmt.Println(psn3)
+
+	close(c)
+	/*close merupakan sebuah function yang digunakan untuk mengindikasikan bahwa sebuah channel
+	sudah tidak digunakan untuk berkomunikasi lagi*/
+	//kalau ga di close bahaya.
+}
+
+func introduce(student string, c chan string) {
+	result := fmt.Sprintf("Hai, my name is %s", student)
+
+	c <- result
+}
+
+
+Output :
+Hai, my name is Mailo
+Hai, my name is Airell
+Hai, my name is Nanda 
+
+
+Seperti biasanya, go routine ketika dijalankan menghasilkan output berbeda-beda
+
+Output 2:
+Hai, my name is Nanda
+Hai, my name is Mailo
+Hai, my name is Airell
+
+
+Ini terjadi karena seperti yang pernah kita bahas pada materi sebelumnya bahwa, Goroutine  bekerja secara asynchronous,
+yang dimana Goroutine satu dengan yang lainnya tidak akan saling menunggu. 
+
+Goroutine merupakan cara agar kita dapat membuat concurrency pada bahasa Go. 
+Dalam concurrency, kita tidak akan tahu mana yang akan selesai tereksekusi terlebih dahulu. 
+
+Ini lah yang menjadi penyebab mengapa di tiap eksekusi menampilkan hasil yang berbeda-beda.
+
+========================================================================================================================================================================
+
+Tapi, hasil konsisten ketika seperti ini
+
+
+package main
+
+import "fmt"
+
+func main() {
+	c := make(chan string)
+
+	go introduce("Airell", c)
+	psn1 := <-c
+	fmt.Println(psn1)
+
+	go introduce("Nanda", c)
+	psn2 := <-c
+	fmt.Println(psn2)
+
+	go introduce("Mailo", c)
+
+	psn3 := <-c
+	fmt.Println(psn3)
+
+	close(c)
+
+}
+
+func introduce(student string, c chan string) {
+	result := fmt.Sprintf("Hai, my name is %s", student)
+
+	c <- result
+}
+
+
+Output:
+Hai, my name is Airell
+Hai, my name is Nanda
+Hai, my name is Mailo
+
+=========================================================================================================================================================================
+
+Channel With Anonymous Function (and Loop)
+
+
+package main
+
+import "fmt"
+
+func main() {
+	c := make(chan string)
+
+	students := []string{"Airell", "Mailo", "Indah"}
+
+	for _, v := range students {
+		go func(student string) {
+			fmt.Println("student", student)
+			result := fmt.Sprintf("Hai, my name is %s", student)
+			c <- result
+		}(v) //langsung memanggil func dengan argumen v, yaitu nama-nama students
+
+	}
+
+	for i := 1; i <= 3; i++ {
+		print(c)
+	}
+
+	close(c)
+}
+
+func print(c chan string) {
+	fmt.Println(<-c)
+}
+
+
+Salah satu Output:
+student Indah
+Hai, my name is Indah
+student Mailo
+student Airell
+Hai, my name is Mailo
+Hai, my name is Airell
+
+
+Banyak output lainnya
+
+==================================================================================================================================================================================================
+
+Channel Directions
+
+Ketika kita menggunakan channel sebagai sebuah parameter dari sebuah function, kita dapat 
+menentukan apakah channel tersebut digunakan untuk menerima data saja, mengirim data saja, ataupun 
+menerima sekaligus mengirim data.
+
+Parameter Syntax	Penjelasan
+c chan string		Parameter c dapat digunakan untuk mengirim dan menerima data
+c chan <- string	Parameter c hanya dapat digunakan untuk mengirim data
+c <- chan string	parameter c hanya dapat digunakan untuk menerima data
+
+
+implementasi
+
+
+package main
+
+import "fmt"
+
+func main() {
+	c := make(chan string)
+
+	students := []string{"Airell", "Mailo", "Indah"}
+
+	for _, v := range students {
+		go introduce(v, c)
+	}
+
+	for i := 1; i <= 3; i++ {
+		print(c)
+	}
+
+	close(c)
+}
+
+func print(c <-chan string) {
+	fmt.Println(<-c) // channel pada func print hanya menerima data
+}
+
+func introduce(student string, c chan<- string) {
+	//channel pada func introduce hanya mengirim data
+	result := fmt.Sprintf("Hai, my name is %s", student)
+	c <- result
+}
+
+
+Salah satu output: 
+Hai, my name is Mailo
+Hai, my name is Indah
+Hai, my name is Airell
+
+=================================================================================================================================================================================
+
+Buffered and Unbuffered Channels (unbuffered)
+
+Pada dasarnya, channel bersifat unbuffered atau tidak di buffer di memori. Channel yang kita gunakan pada 
+halaman-halaman sebelumnya merupakan unbuffered channel yang dimana proses penerimaan dan pengiriman 
+data bersifat synchronous. 
+
+Lain halnya dengan unbuffered channel yang dimana kita dapat menentukkan kapasitas dari buffer nya, dan 
+selama jumlah data yang dikirim melalui unbuffered channel tidak melebihi kapasitasnya, maka proses 
+pengiriman data akan bersifat asynchronous.
+
+
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	/*//membuat unbuffered? channel dengan memberikan kapasitas buffer
+	c:= make(chan int, 3)
+	//3 adalah jumlah kapasitas buffer
+	*/
+
+	c1 := make(chan int)
+
+	go func(c chan int) {
+		fmt.Println("func goroutine starts sending data into the channel")
+		c <- 10
+		fmt.Println("func goroutine after sending data into the channel")
+	}(c1)
+
+	fmt.Println("main go routine sleeps for 2 seconds")
+	time.Sleep(time.Second * 2)
+
+	fmt.Println("main goroutine starts recieving data")
+	d := <-c1
+	fmt.Println("main goroutine recieved data:", d)
+
+	close(c1)
+	time.Sleep(time.Second)
+
+}
+
+Output:
+main go routine sleeps for 2 seconds
+func goroutine starts sending data into the channel
+main goroutine starts recieving data
+main goroutine recieved data: 10
+func goroutine after sending data into the channel
+
+========================================================================================================================================================================
+
+Buffered and Unbuffered Channels (buffered)
+
+
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	c1 := make(chan int, 3)
+
+	go func(c chan int) {
+		for i := 1; i <= 5; i++ {
+			fmt.Printf("func goroutine #%d starts sending data into chanell\n", i)
+			c <- i
+			fmt.Printf("func goroutine #%d after sending data into the channel\n", i)
+		}
+
+		close(c)
+
+	}(c1)
+
+	fmt.Println("main goroutine sleeps 2 seconds")
+	time.Sleep(time.Second * 2)
+
+	for v := range c1 {
+		//v = <- c1
+		fmt.Println("main goroutine recieved value from channel:", v)
+	}
+
+}
+
+
+Output:
+
+main goroutine sleeps 2 seconds
+func goroutine #1 starts sending data into chanell
+func goroutine #1 after sending data into the channel
+func goroutine #2 starts sending data into chanell
+func goroutine #2 after sending data into the channel
+func goroutine #3 starts sending data into chanell
+func goroutine #3 after sending data into the channel
+func goroutine #4 starts sending data into chanell
+func goroutine #4 after sending data into the channel
+main goroutine recieved value from channel: 1
+main goroutine recieved value from channel: 2
+main goroutine recieved value from channel: 3
+main goroutine recieved value from channel: 4
+func goroutine #5 starts sending data into chanell
+func goroutine #5 after sending data into the channel
+main goroutine recieved value from channel: 5
+
+
+1-3 aman, konsisten hasilnya. 4 dan 5 tidak.
+
+========================================================================================================================================================================================
+
+Select
+
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+
+	c1 := make(chan string)
+	c2 := make(chan string)
+
+	go func() {
+		time.Sleep(1 * time.Second)
+
+		c1 <- "Hello!"
+	}()
+
+	go func() {
+		time.Sleep(1 * time.Second)
+
+		c2 <- "Salut!"
+	}()
+
+	for i := 1; i <= 2; i++ {
+		select {
+		case msg1 := <-c1:
+			fmt.Println("Recieved", msg1)
+		case msg2 := <-c2:
+			fmt.Println("Recieved", msg2)
+		}
+	}
+
+}
+
+Output:
+
+Recieved Hello!
+Recieved Salut!
+
+
+
+
+
+
