@@ -1,0 +1,110 @@
+DEFER
+
+defer adalah sebuah keyword pada bahasa Go yang digunakan untuk memanggil
+sebuah function dimana eksekusinya akan ditahan hingga blok sebuah function
+selesai.
+
+package main
+
+import "fmt"
+
+func main() {
+
+	defer fmt.Println("defer func starts to execute")
+	fmt.Println("Hai everyone")
+	fmt.Println("Welcome back to Go Learning Center")
+
+}
+
+Output:
+
+Hai everyone
+Welcome back to Go Learning Center
+defer func starts to execute
+
+/defer muncul diakhir
+
+=================================================================================
+
+package main
+
+import "fmt"
+
+func main() {
+	callDeferFunc()
+	fmt.Println("Hai everyone!")
+}
+
+func callDeferFunc() {
+	defer deferFunc()
+}
+
+func deferFunc() {
+	fmt.Println("Defer func starts to execute")
+}
+
+
+Output:
+
+Defer func starts to execute
+Hai everyone!
+
+/defer muncul diawal
+/hal ini terjadi karena deferFunc dipanggil dalam block function callDeferFunc()
+bukan main().
+
+=================================================================================
+
+
+package main
+
+import "fmt"
+
+func main() {
+	callDeferFunc()
+	fmt.Println("Hai everyone!")
+}
+
+func callDeferFunc() {
+	fmt.Println("satu")
+	defer deferFunc()
+	fmt.Println("dua")
+}
+
+func deferFunc() {
+	fmt.Println("Defer func starts to execute")
+}
+
+
+Output:
+
+satu
+dua
+Defer func starts to execute	====> tertunda di block function callDeferFunc()
+Hai everyone!
+
+=================================================================================
+
+EXIT
+
+
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+func main() {
+	defer fmt.Println("Invoke with defer")
+	fmt.Println("before exiting")
+	os.Exit(2)
+}
+
+
+Output:
+
+before exiting
+exit status 2
+
+/defer tidak tereksekusi, karena program langsung terpaksa berhenti.
