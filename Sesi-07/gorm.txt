@@ -1,0 +1,439 @@
+GORM
+
+Introduction
+
+	Gorm adalah ORM(Object Relation Mapping) populer untuk bahasa Go.
+	ORM itu sendiri merupakan teknik yang merubah suatu data tabel /database menjadi sebuah object.
+	Untuk menginstall Gorm, jalankan perintah pada terminal
+		go get -u gorm.io/gorm
+
+Declaring Models
+
+	Pada saat kita ingin membuat tabel menggunakan Gorm, maka kita perlu membuat model terleboh dahulu.
+	Model tersebut kita buat dengan menggunakan struct.
+	Misalkan kita ingin membuat tabel User, maka kita dapat membuat struct dengan nama User.
+
+	>buat folder models. Didalamnya, buat file user.go
+
+		package models
+
+		import "time"
+
+		type User struct {
+			ID        uint   `gorm:"primaryKey"`
+			Email     string `gorm:"not null;unique;type:varchar(191)"`
+			Products  []Product
+			CreatedAt time.Time
+			UpdatedAt time.Time
+		}
+
+	Semua properti maupun nama struct nya perlu diawali dengan huruf kapital.
+	Kenapa?
+	Pada materi export-unexported, 
+	cara kita meng-eksport suatu variable atau suatu tipe data adalah dengan mengawali penulisan variable maupun tipe data lainnya dengan huruf kapital atau upper case. 	
+
+	Gorm menyediakan tags. Contohnya properti ID diberikan tag `gorm:"primaryKey"`
+	Kita juga dapat memberikan constraint/batasan kepada suatu kolom, contohnya pada properti Email.
+	Pada properti Email terdapat tag not null dan unique. hal ini berarti email harus unik, dan tidak boleh null/kosong.
+	Properti Email memiliki tipe data string, dan otomatis tipedata nya akan menjadi TEXT pada database.
+	Tapi kita dapat mengganti tipe datanya seperti contoh varchar, menggunakan tag type:<tipe_data>
+
+================================================================================================================================================================================================================
+
+Association
+
+	Misalkan selain tabel User, kita ingin membuat tabel Products.
+	Tabel Products ini memiliki foreign key dari ID User.
+	Assosiasinya menjadi one to many, dimana User bisa memiliki banyak product.
+
+	Gorm menyediakan berbagai asosiasi, seperti one to many, one to one, dan many to many.
+
+	>buat file product.go dalam folder models
+	
+		package models
+
+		import (
+			"time"
+		)
+
+		type Product struct {
+			ID        uint   `gorm:"primaryKey"`
+			Name      string `gorm:"not null;type:varchar(191)"`
+			Brand     string `gorm:"not null;type:varchar(191)"`
+			UserID    uint
+			CreatedAt time.Time
+			UpdatedAt time.Time
+		}
+
+	Perhatikan bahwa struct Product memiliki property UserID. ByDefault, UserID tersebut otomatis menjadi foreign key.
+	Ketika suatu struct, memiliki property yang mana nama property tersebut merupakan gabungan nama struct lain dan primary key nya.
+	Struct User memiliki primary key ID. Struct Product memiliki property UserID.
+
+	>Tambahkan Products pada struct User
+
+		package models
+
+		import "time"
+
+		type User struct {
+			ID        uint   `gorm:"primaryKey"`
+			Email     string `gorm:"not null;unique;type:varchar(191)"`
+			Products  []Product			// <==== yang ini
+			CreatedAt time.Time
+			UpdatedAt time.Time
+		}
+
+	Kalau mau membuat foreign key yang bukan dari id user, gunakan tag foreign key.
+	https://gorm.io/docs/has_many.html <===== cari disini
+================================================================================================================================================================================================================
+
+Connecting to Database and Table Migration
+
+	>Karena database yang digunakan adalah database PostgreSQL, maka perlu diinstall driver untuk postgreSQL.
+		go get gorm.io/driver/postgres
+	
+	>Buat folder database, dengan file db.go didalamnya
+	
+	>pada file db.go
+
+		package database
+
+		import (
+			"fmt"
+			"gorm/models"
+			"log"
+
+			"gorm.io/driver/postgres"
+			"gorm.io/gorm"
+		)
+
+		var (
+			host     = "localhost"
+			user     = "postgres"
+			password = "Dita2710"
+			dbPort   = "5432"
+			dbname   = "db_go"
+			db       *gorm.DB
+			err      error
+		)
+
+		func StartDB() {
+			config := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", host, user,
+				password, dbname, dbPort)
+
+			db, err = gorm.Open(postgres.Open(config), &gorm.Config{})
+			//method Open digunakan untuk membangun koneksi ke database.
+			//ketika koneksi berhasil, maka variabel db akan mengandung referensi dari database dengan tipe data *gorm.DB
+			//perlu diingat, variabel db adalah variabel global
+
+			if err != nil {
+				log.Fatal("error connecting to database :", err)
+
+			}
+
+			db.Debug().AutoMigrate(models.User{}, models.Product{})
+			//method Debug digunakan sebagai debugging atau logger.
+			//di chain dengan method AutoMigrate
+			//AutoMigratedigunakan untuk migrasi otomatis dari struct-struct yang telah dibuat.
+
+		}
+	
+	
+	>Panggil function StartDB pada file main.go
+
+		package main
+
+		import "gorm/database"
+
+		func main() {
+			database.StartDB()
+		}
+
+	>go run main.go
+
+		Terminal:
+		2022/10/04 20:21:12 D:/New folder/GoLang/go/pkg/mod/gorm.io/driver/postgres@v1.3.10/migrator.go:167 SLOW SQL >= 200ms   
+		[618.239ms] [rows:1] SELECT count(*) FROM information_schema.tables WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'users' AND table_type = 'BASE TABLE'
+
+		2022/10/04 20:21:13 D:/New folder/GoLang/go/pkg/mod/gorm.io/driver/postgres@v1.3.10/migrator.go:140 SLOW SQL >= 200ms   
+		[466.612ms] [rows:0] CREATE TABLE "users" ("id" bigserial,"email" varchar(191) NOT NULL UNIQUE,"created_at" timestamptz,"updated_at" timestamptz,PRIMARY KEY ("id"))
+	
+		2022/10/04 20:21:13 D:/New folder/GoLang/go/pkg/mod/gorm.io/driver/postgres@v1.3.10/migrator.go:167
+		[0.994ms] [rows:1] SELECT count(*) FROM information_schema.tables WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'products' AND table_type = 'BASE TABLE'
+
+		2022/10/04 20:21:13 D:/New folder/GoLang/go/pkg/mod/gorm.io/driver/postgres@v1.3.10/migrator.go:140
+		[144.515ms] [rows:0] CREATE TABLE "products" ("id" bigserial,"name" varchar(191) NOT NULL,"brand" varchar(191) NOT NULL,"user_id" bigint,"created_at" timestamptz,"updated_at" timestamptz,PRIMARY KEY ("id"),CONSTRAINT "fk_users_products" FOREIGN KEY ("user_id") REFERENCES "users"("id"))
+
+
+	>dapat dilihat melalui pgAdmin, bahwa pada database db_go, telah terbuat tabel "users" dan "products"
+		nama dari tabel otomatis plural, dan lowercase.
+
+=================================================================================================================================================================================================================================================================================================================================
+
+Create User Data
+
+	Untuk melakukan CRUD data melalui Gorm, kita membutuhkan referensi database.
+	pada contoh sebelumnya, variabel db pada file db.go menampung referensi dari database dengan tipe data *gorm.DB.
+	makadari itu, tambahkan function GetDB pada file db.go yang akan mereturn variabel db tersebut.
+
+		func GetDB() *gorm.DB {
+			return db
+		}
+
+	Pada file main.go, buat function createUser yang digunakan untuk membuat user baru.
+		 
+		package main
+
+		import (
+			"fmt"
+			"gorm/database"
+			"gorm/models"
+		)
+
+		func main() {
+			database.StartDB()
+
+			createUser("johndoe@gmail.com")
+		}
+	
+		func createUser(email string) {
+			db := database.GetDB()
+			//mengandung referensi database
+
+			User := models.User{
+				Email: email,
+			}
+
+			err := db.Create(&User).Error
+			//untuk melakukan create data, gunakan method Create
+			//method Create memerlukan data sebagai argumen
+			//data tersebut harus memiliki tipedata yang sama dengan yang ingin dibuat
+			//kita ingin membuat user, makadari itu data yang diberikan pada method Create adalah data yang bertipe struct User.
+
+			// method untuk CRUD memiliki properti Error.
+
+			if err != nil {
+				fmt.Println("Error creating user data:", err)
+				return
+			}
+
+			fmt.Println("New User Data:", User)
+		}
+
+
+		>go run main.go
+
+			Terminal:
+				(karena banyak, ini output terakhir)
+			2022/10/04 21:43:26 D:/New folder/GoLang/go/pkg/mod/gorm.io/driver/postgres@v1.3.10/migrator.go:355
+			[5.437ms] [rows:1] SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'products' AND constraint_name = 'fk_users_products'
+			New User Data: {1 johndoe@gmail.com [] 2022-10-04 21:43:26.175825 +0700 +07 2022-10-04 21:43:26.175825 +0700 +07}
+
+		>lihat di pgAdmin, tabel Users
+			User sudah ada/bertambah
+=======================================================================================================================================================================================================================================================================================
+
+Get One User Data
+
+	>buat function getUserByID
+
+		func getUserByID(id uint) {
+			db := database.GetDB()
+	
+			user := models.User{}
+
+			err := db.First(&user, "id = ?", id).Error
+			//Untuk mendapatkan data dari tabel, dapat menggunakan method First.
+			//method First menerima 3 parameter. parameter1 adalah pointer terhadap yang dicari.
+			//parameter ke 2 adalah condition dari query
+			//parameter 3 adalah data dari conditionnya
+
+			//method First akan mengemballikan ErrRecordNotFound jika tidak ada data yang ditemukan.
+
+			if err != nil {
+				if errors.Is(err, gorm.ErrRecordNotFound) {
+					fmt.Println("User data not found")
+					return
+				}
+				print("Error finding user:", err)
+			}
+
+			fmt.Printf("User Data: %+v \n", user)
+
+		}
+
+	>pada func main, panggil function getUserByID
+		getUserByID(1)
+
+	>go run main.go
+		Terminal (akhir):
+		2022/10/04 21:59:13 D:/New folder/GoLang/go/pkg/mod/gorm.io/driver/postgres@v1.3.10/migrator.go:355
+		[16.010ms] [rows:1] SELECT count(*) FROM INFORMATION_SCHEMA.table_constraints WHERE table_schema = CURRENT_SCHEMA() AND table_name = 'products' AND constraint_name = 'fk_users_products'
+		User Data: {ID:1 Email:johndoe@gmail.com Products:[] CreatedAt:2022-10-04 21:43:26.175825 +0700 +07 UpdatedAt:2022-10-04 21:43:26.175825 +0700 +07}
+
+=======================================================================================================================================================================================================================================================================================
+
+Update User Data
+
+	>Buat func updateUserByID
+
+		func updateUserByID(id uint, email string) {
+			db := database.GetDB()
+
+			user := models.User{}
+
+			err := db.Model(&user).Where("id = ?", id).Updates(models.User{Email: email}).Error
+			//method model digunakan terlebih dahulu agar hasil update dapat langsung di scan
+			//untuk membuat conditionnya, gunakan method Where.
+			//selain menggunakan method Model, kita juga bisa menggunakan method Table sbb
+			// db.Table("users").Where("id = ?").Updates(map[string]interface{}{"email" : "johnjohn@gmail.com"})
+
+			if err != nil {
+				fmt.Println("Error updating user data:", err)
+				return
+			}
+			fmt.Printf("Update user's email %+v \n", user.Email)
+		}
+
+	>Panggil func updateUserByID pada func main
+
+		func main() {
+			database.StartDB()
+			updateUserByID(1, "johnjon@gmail.com")
+		}
+
+	>go run main.go
+		Terminal:
+		Update user's email johnjon@gmail.com 
+		PS D:\New folder\477_DitaLastri_gob2\Sesi-07\gorm> 
+
+	>lihat di pgAdmin, email sudah terupdate
+=======================================================================================================================================================================================================================================================================================
+
+Hooks
+	>Buat function BeforeCreate pada file product.go
+
+		func (p *Product) BeforeCreate(tx *gorm.DB) (err error) {
+
+			fmt.Println("Product Before Create()")
+	
+			if len(p.Name) < 4 {
+				err = errors.New("product name is too short")
+			}
+			return
+		}
+
+	>Buat function createProduct pada main.go untuk membuat product baru
+
+		func createProduct(userID uint, brand string, name string) {
+			db := database.GetDB()
+
+			Product := models.Product{
+				UserID: userID,
+				Brand:  brand,
+				Name:   name,
+			}
+
+			err := db.Create(&Product).Error
+
+			if err != nil {
+				fmt.Println("Error creating product data:", err.Error())
+				return
+			}
+			fmt.Println("New Product Data:", Product)
+
+		}
+
+	>Panggil function createProduct pada main.go
+
+		func main() {
+			database.StartDB()
+			createProduct(1, "YLO", "YYY")
+		}
+
+	>go run main.go
+		Terminal:
+		Product Before Create()
+		Error creating product data: product name is too short
+
+	Error karena nama product yang diberikan kurang dari 4
+
+	>createProduct(1, "YLO", "YYYY")
+	>go run main.go
+		Terminal:
+		Product Before Create()
+		New Product Data: {1 YYYY YLO 1 2022-10-05 13:57:32.7853321 +0700 +07 2022-10-05 13:57:32.7853321 +0700 +07}
+
+	>lihat di pgAdmin, table products, data sudah ada.
+=======================================================================================================================================================================================================================================================================================
+
+Edger Loading
+	Karena data user dengan id 1 sudah memiliki product, kita dapat menjalankan join statement.
+	Untuk melakukan join statement, kita dapat menggunakan edger loading dari Gorm.
+
+	>Buat Function
+
+		func getUsersWithProducts() {
+			db := database.GetDB()
+	
+			users := models.User{}
+			err := db.Preload("Products").Find(&users).Error
+			//untuk melakukan eager loading, dapat menggunakan method Preload
+			// method preload dengan parameter nama table
+			// walaupun nama table seharusnya lowercase semua, untuk parameter preload harus digunakan uppercase
+
+			if err != nil {
+				fmt.Println("Error getting user datas with products:", err.Error())
+				return
+			}
+
+			fmt.Println("User Datas With Products")
+			fmt.Printf("%+v", users)
+		}
+
+	>Panggil function getUserWithProducts pada func main
+
+		func main() {
+			database.StartDB()
+			getUsersWithProducts()
+		}
+
+	>go run main.go
+		Terminal:
+		User Datas With Products
+		{ID:1 Email:johnjon@gmail.com Products:[{ID:1 Name:YYYY Brand:YLO UserID:1 CreatedAt:2022-10-05 13:57:32.785332 +0700 +07 UpdatedAt:2022-10-05 13:57:32.785332 +0700 +07}] CreatedAt:2022-10-04 21:43:26.175825 +0700 +07 UpdatedAt:2022-10-05 13:32:28.323374 +0700 +07}
+============================================================================================================================================================================================================================================================================================================
+
+Delete Product
+
+	>Buat func deleteProductById
+
+		func deleteProductById(id uint) {
+			db := database.GetDB()
+
+			product := models.Product{}
+			err := db.Where("id = ?", id).Delete(&product).Error
+
+			if err != nil {
+				fmt.Println("Error deleting product:", err.Error())
+				return
+			}
+	
+			fmt.Printf("Product with id %d has been successfully deleted", id)
+		}
+
+	>Panggil func
+
+		func main() {
+			database.StartDB()
+			deleteProductById(1)
+		}
+	
+	>go run main.go
+		Terminal:
+		Product with id 1 has been successfully deleted
+	
+	>Lihat di pgAdmin
+==================================================================================================================================================================================================================================================================================================================
+
+
