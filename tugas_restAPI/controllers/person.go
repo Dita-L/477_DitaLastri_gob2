@@ -24,6 +24,13 @@ func (idb *InDB) GetPerson(c *gin.Context) {
 
 	if err != nil {
 		result = gin.H{
+			"result": "data not found",
+		}
+	}
+
+	err = idb.DB.Delete(&person).Error
+	if err != nil {
+		result = gin.H{
 			"result": err.Error(),
 			"count":  0,
 		}
