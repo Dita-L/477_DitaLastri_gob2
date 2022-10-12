@@ -1,0 +1,16 @@
+error 1 
+    gabisa buat token
+    >> gara2 ada err != nil yang kebanyakan dibagian user controller beforecreate
+    >> jadinya ga ke hash
+    >> dan juga kebanyakan ngesend user email airell@gmail.com
+    >> karena, saat dicoba registrasi dengan contoh@gmail.com, lalu login, token baru bisa didapatkan
+
+ketika ingin membuat product, jangan lupa di set authorizationnya menjadi bearer token >>di postman
+error 2 
+    gabisa buat product
+    >> gara2 dibagian models/product, lupa dihapus yang required-lalalalala
+    >> lalalala nya yang dihapus
+
+error 3
+    gabisa update product
+    >> typo yang harusnya "userData" jadi "esurData"

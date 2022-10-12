@@ -1,0 +1,267 @@
+{
+	"info": {
+		"_postman_id": "d6f8f55c-f555-4204-8b47-2064baa8d964",
+		"name": "jwt-token",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "register user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "contoh@gmail.com",
+							"type": "default"
+						},
+						{
+							"key": "full_name",
+							"value": "Airell Jordan",
+							"type": "default"
+						},
+						{
+							"key": "password",
+							"value": "12345678",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/users/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"register"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "http://localhost:8080/users/register",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "airell@gmail.com",
+									"type": "default"
+								},
+								{
+									"key": "full_name",
+									"value": "Airell Jordan",
+									"type": "default"
+								},
+								{
+									"key": "password",
+									"value": "12345",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/users/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"register"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 11 Oct 2022 12:48:10 GMT"
+						},
+						{
+							"key": "Content-Length",
+							"value": "63"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"email\": \"airell@gmail.com\",\n    \"full_name\": \"Airell Jordan\",\n    \"id\": 1\n}"
+				}
+			]
+		},
+		{
+			"name": "token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "contoh@gmail.com",
+							"type": "default"
+						},
+						{
+							"key": "password",
+							"value": "12345678",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/users/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "token-contoh2",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "contoh2@gmail.com",
+							"type": "default"
+						},
+						{
+							"key": "password",
+							"value": "1234567",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/users/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createProduct-tokenContoh2",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImNvbnRvaDJAZ21haWwuY29tIiwiaWQiOjZ9.ZlTCVcfqsXy8qIcr5CzkN5pWR1dSEVMoQKKZ3-cJMVI",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "title",
+							"value": "Bantal",
+							"type": "default"
+						},
+						{
+							"key": "description",
+							"value": "silahkan dibelii",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/products",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateProduct-tokenContoh2",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImNvbnRvaDJAZ21haWwuY29tIiwiaWQiOjZ9.ZlTCVcfqsXy8qIcr5CzkN5pWR1dSEVMoQKKZ3-cJMVI",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "title",
+							"value": "Bantal update",
+							"type": "default"
+						},
+						{
+							"key": "description",
+							"value": "Product ter-update",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/products/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"products",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
