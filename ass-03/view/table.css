@@ -1,0 +1,17 @@
+table {
+    color: black;
+    width: 100%;
+}
+
+
+table .header {
+    font-size: 30px;
+    background-color: purple;
+    text-align:center;
+}
+
+table .value {
+    font-size:25px;
+    background-color: lightseagreen;
+    text-align: center;
+}

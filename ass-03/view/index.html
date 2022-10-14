@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Assignment 3</title>
+        <link rel="stylesheet"
+        href="./table.css">
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+            integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+            crossorigin="anonymous"
+        />
+        <script
+            src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"
+        ></script>
+        <script
+            src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"
+        ></script>
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"
+        ></script>
+    </head>
+    <body>
+        <h1>Assignment 03</h1>
+        <h3>Auto Reload</h3>
+        <table>
+            <thead class="header">
+                <tr>
+                    <th>Title</th>
+                    <th>Value</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody class="value">
+                <tr>
+                    <td>Water</td>
+                    <td id="waterValue"></td>
+                    <td id="waterStatus"></td>
+                </tr>
+                <tr>
+                    <td>Wind</td>
+                    <td id="windValue"></td>
+                    <td id="windStatus"></td>
+                </tr>
+            </tbody>
+        </table>
+        <script> 
+            const api_url = "http://localhost:8080/statuswater";
+
+            async function get_data(s) {
+                // data
+                const response = await fetch(s)
+                var data = await response.json()
+                
+                var waterValue = data.water
+                document.getElementById("waterValue").innerHTML = waterValue
+                
+                if (waterValue <= 5) {
+                    document.getElementById("waterStatus").innerHTML = "status aman"
+                } else if (waterValue>5 && waterValue <=8) {
+                    document.getElementById("waterStatus").innerHTML = "status siaga"
+                } else {
+                    document.getElementById("waterStatus").innerHTML = "status bahaya"
+                }
+
+                var windValue = data.wind
+                document.getElementById("windValue").InnerHTML = windValue
+
+                if (windValue <= 6) {
+                    document.getElementById("windStatus").InnerHTML = "status aman"
+                } else if (windValue > 6 && windValue <=15) {
+                    document.getElementById("windStatus").InnerHTML = "status siaga"
+                } else {
+                    document.getElementById("windStatus").InnerHTML = "status bahaya"
+                }
+
+                setTimeout(() => get_data(s), 15000)
+            }
+
+            get_data(api_url)
+        </script>
+
+    </body>
+</html>
