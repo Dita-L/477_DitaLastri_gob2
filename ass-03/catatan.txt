@@ -1,0 +1,95 @@
+MEMBUAT RANDOM NUMBER
+import	"math/rand"
+
+func main() {
+	v := rand.Intn(10 - 3)
+	fmt.Println(v)
+}
+
+hasil go run pertama >> 6
+hasil go run kedua >> 6
+
+import (
+    "fmt"
+	"math/rand"
+	"time"
+)
+
+func main() {
+	rand.Seed(time.Now().UnixNano())
+	v := rand.Intn(10 - 3)
+	fmt.Println(v)
+}
+
+hasil go run pertama >> 4
+hasil go run kedua >> 1
+hasil go run ketiga >> 6
+============================================
+
+MEMBUAT Controller
+
+Endpoint POST >> untuk create 
+	>>di postman, POST, http://localhost:8080/statuswater, body, raw
+		{
+    		"water": 7,
+    		"wind": 6
+		}
+	>> 7 dan 6 hanya angka random
+
+Endpoint GET
+	>>mirip-mirip lah kodingnya sama POST
+	>> di postman, GET, http://localhost:8080/statuswater, langsung send
+
+=============================================
+
+HTML
+	>> https://github.com/arifswn/go_b2_dts_kominfo/blob/main/sesi-10/hello-reload/index.html
+
+=============================================
+
+go run main.go
+buka index.html
+	>>tidak terjadi apa-apa
+	>>inspect
+	>>cannot fetch
+	>>cors policy??
+	
+=============================================
+
+Mengatasi CORS policy
+
+	Berdasarkan https://stackoverflow.com/questions/29418478/go-gin-framework-cors
+
+package middleware
+
+import (
+	"github.com/gin-gonic/gin"
+)
+
+func CORSMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Content-Type", "application/json")
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Max-Age", "86400")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, UPDATE")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, X-Max")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(200)
+			return
+		}
+
+		c.Next()
+	}
+}
+
+================================================
+
+go run main.go
+buka index.html
+	>>kode jalan, waterValue muncul, waterStatus muncul
+	>>windValue tidak muncul, windStatus tidak muncul
+why???
+
+================================================

@@ -1,0 +1,29 @@
+main {
+    background-color: black;
+    color: white;
+    text-align: center;
+}
+
+table {
+    width: 100%;
+}
+
+
+table .header {
+    font-size: 25px;
+    background-color: purple;
+    text-align:center;
+}
+
+table .value {
+    font-size:20px;
+    background-color: lightseagreen;
+    text-align: center;
+}
+
+footer {
+    padding-top: 6px;
+    color: white;
+    background-color: black;
+    font-family: cursive;
+}
