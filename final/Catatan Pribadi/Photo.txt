@@ -1,0 +1,116 @@
+Models
+    >>Photo
+        >>ID
+        >>User_ID
+        >>Caption
+        >>Title         Validasi tidak boleh kosong
+        >>Photo_URL     Validasi tidak boleh kosong
+        >>Created_At    Date
+        >>Updated_At    Date
+
+Membuat Photo controller
+    >>POST (/photos)
+        >>Authorization (token)
+        >>request body:
+            {
+                "title": "string",
+                "caption": "string",
+                "photo_url": "string"
+            }
+        
+        >>response:
+            {
+                "id": interger,
+                "title": "string",
+                "caption": "string",
+                "photo_url": "string",
+                "user_id": interger,
+                "created_at": "date"
+            }
+        
+        codingan untuk mengupload photo berdasarkan https://gin-gonic.com/docs/examples/upload-file/single-file/
+    
+    >>GET (/photos)
+        >>Authorization (token)
+        
+        >>response:
+            [
+                {
+                    "id": interger,
+                    "title": "string",
+                    "caption": "string",
+                    "photo_url": "string",
+                    "user_id": interger,
+                    "created_at": "date",
+                    "updated_at": "date",
+                    "User": {
+                        "email": "string",
+                        "username": "string"
+                    }
+                },
+                {
+                    "id": interger,
+                    "title": "string",
+                    "caption": "string",
+                    "photo_url": "string",
+                    "user_id": interger,
+                    "created_at": "date",
+                    "updated_at": "date",
+                    "User": {
+                        "email": "string",
+                        "username": "string"
+                    }
+                }
+            ]
+    >>PUT (/photos/:photoId)
+        >>Authorization (token)
+        >>params:photoId
+
+        >>request body:
+            {
+                "title": "string",
+                "caption": "string",
+                "photo_url": "string"
+            }
+        
+        >>response
+           {
+               "id": interger,
+                "title": "string",
+                "caption": "string",
+                "photo_url": "string",
+                "user_id": interger,
+                "created_at": "date",
+                "updated_at": "date"
+            }
+        
+        >>perlu melewati autentikasi dan autorisasi.
+            >>autentikasi (token)
+            >>autorisasi (user hanya boleh mengupdate photo milik user itu sendiri)
+    
+    >>DELETE (/photos/:photoId)
+        >>Authorization (token)
+        >>params: photoId
+
+        >>response :
+            {
+                "message": "Your photo has been successfully deleted"
+            }
+        
+        >>perlu melewati autentikasi dan autorisasi.
+            >>autentikasi (token)
+            >>autorisasi (user hanya boleh mengupdate photo milik user itu sendiri)
+================================================================================================================
+
+Error
+    CreatePhoto
+        >> validator invalid :"require"
+            >>solusi: harusnya "required"
+        >> table mygram.photos doesn't exist
+            >>gara-gara lupa di automigrate
+            >>solusi: di config.go, bagian automigrate, tambahkan models.Photo{}
+        >>saat create pakai user ke 2, user id nya 1, harusnya 2
+            >> gara-gara pakai tokennya punya user ke 1
+        >> respon untuk caption kosong, (caption: "")
+            >> gara-gara ga ditulis `json:"caption" form:"caption"`
+    

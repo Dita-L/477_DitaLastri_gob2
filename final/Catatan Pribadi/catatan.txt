@@ -1,0 +1,112 @@
+Membuat Database MyGram / Final
+    >> karena pgAdmin susah/lama dibuka, ganti mySql, xampp
+        >> config db ada di assignment2
+        >> install gorm serta drivernya
+            >>"github.com/go-sql-driver/mysql" dan "github.com/jinzhu/gorm"
+
+Membuat Models =====> Karena ada validasi, import "github.com/asaskevich/govalidator"
+    >>User
+        >>ID
+        >>Username      Validasi uniqueindex, tidak boleh kosong, harus terisi
+        >>Email         Validasi format email, uniqueindex, tidak boleh kosong, harus terisi
+        >>Password      Validasi tidak  boleh kosong, minimal 6 karakter
+        >>Age           Validasi tidak boleh kosong, minimal umur diatas 8
+        >>Created_At    Date
+        >>Updated_At    Date
+
+    >>Photo
+        >>ID
+        >>User_ID
+        >>Caption
+        >>Title         Validasi tidak boleh kosong
+        >>Photo_URL     Validasi tidak boleh kosong
+        >>Created_At    Date
+        >>Updated_At    Date
+
+    >>Comment
+        >>ID
+        >>UserID
+        >>PhotoID
+        >>Message       Validasi tidak boleh kosong
+        >>Created_At    Date
+        >>Updated_At    Date
+    
+    >>Socmed
+        >>ID
+        >>Name          String/vachar       Validasi tidak boleh kosong
+        >>Socmed_URL    String/text         Validasi tidak boleh kosong
+        >>UserID
+        >>Created_At    Date
+        >>Updated_At    Date
+
+Membuat Middlewares
+    >>Mengakses data Photo, Comment, Socmed
+        >>perlu Autentikasi - jwt
+        >>install github.com/dgrijalva/jwt-go dan golang.org/x/crypto
+    >>Memodifikasi (Update dan Delete)
+        >>perlu Autorisasi
+
+Membuat User Controllers
+    >>POST (/users/register) == Create
+        request body:
+            {
+                "age": int,
+                "email": string,
+                "password": string,
+                "username": string
+            }
+        
+        response:
+            {
+                "age": int,
+                "email": string,
+                "id": int,
+                "username": string
+            }
+        
+        Password di hash dengan bcrypt sebelum disimpan ke database
+    
+    >>POST (/users/login) 
+        request body :
+            {
+                "email": string,
+                "password": string
+            }
+        
+        response:
+            {
+                "token": string
+            }
+
+        Logika: cek email dan password
+            >> cek password juga menggunakan bcrypt
+
+    >>PUT (/users) == Update
+        request
+            >>headers: Autorisasi (token)
+            >>params: userId (int)
+            >>body:
+                {
+                    "email": "string",
+                    "username": "string"
+                }
+
+        response
+            {
+                "id": int,
+                "email": string,
+                "username": string,
+                "age": int,
+                "updated_at": date
+            }
+
+        Melewati Autentikasi dulu, dilakukan dengan bantuan jwt
+
+    >>DELETE (/users)
+        request
+            >>headers: Autorisasi (token)
+        
+        response
+            {
+                "message": "Your account has been succeessfully deleted"
+            }
